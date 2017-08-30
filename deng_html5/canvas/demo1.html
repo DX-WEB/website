@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas转图片格式</title>
+</head>
+<body>
+<img src="images/test1.jpg" id="test_img"/>
+<canvas id="my_canvas" width="300" height="300" style="border:1px solid #d3d3d3;"></canvas>
+<a id="download" download="image.jpg">下载图像</a>
+</body>
+<script type="text/javascript">
+
+    init();
+    function init(){
+        var test_img = document.getElementById('test_img');
+        var canvas=document.getElementById("my_canvas");
+        var ctx=canvas.getContext("2d");
+        test_img.onload = function(){
+            //不能在onload事件调用的函数里面，继续添加onload事件。
+            ctx.fillStyle="#fff";
+            ctx.drawImage(test_img,111,90);
+            var type = 'image/jpeg';
+            //将canvas元素中的图像转变为DataURL
+            var dataurl = canvas.toDataURL(type);
+            //抽取DataURL中的数据部分，从Base64格式转换为二进制格式
+            var bin = atob(dataurl.split(',')[1]);
+            //创建空的Uint8Array
+            var buffer = new Uint8Array(bin.length);
+            //将图像数据逐字节放入Uint8Array中
+            for (var i = 0; i < bin.length; i++) {
+                buffer[i] = bin.charCodeAt(i);
+            }
+            //利用Uint8Array创建Blob对象
+            var blob = new Blob([buffer.buffer], {type: type});
+            ctx.fillStyle="#ffffff";
+            var url = window.URL.createObjectURL(blob);
+            document.getElementById("download").href=url;
+        }
+
+
+        /***
+         绘制canvas元素中的图像
+         ***/
+//        var canvas = document.getElementById("canvas");
+//        if (canvas == null)
+//            return false;
+//        var context = canvas.getContext('2d');
+//        context.fillStyle = "#EEEEFF";
+//        context.fillRect(0, 0, 400, 300);
+//        var n = 0;
+//        for(var i = 0; i < 10; i++)
+//        {
+//            context.beginPath();
+//            context.arc(i * 25, i * 25, i * 10, 0, Math.PI * 2, true);
+//            context.closePath();
+//            context.fillStyle = 'rgba(255, 0, 0, 0.25)';
+//            context.fill();
+//        }
+
+    }
+
+</script>
+</html>
